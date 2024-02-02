@@ -296,23 +296,23 @@ sintaxe de citação introduzida pelo Yii:
 * `[[column name]]`: coloque um nome da coluna a ser citada entre colchetes duplos; 
 * `{{table name}}`: coloque o nome da tabela a ser citada entre chaves duplas.
 
-Yii DAO will automatically convert such constructs into the corresponding quoted column or table names using the
-DBMS specific syntax.
-For example,
+Yii DAO irá converter automaticamente tais constructos nas colunas ou nomes de tabelas entre aspas correspondentes usando
+sintaxe específica do SGBD (Sistema de gerenciamento de banco de dados).
+Por exemplo,
 
 ```php
-// executes this SQL for MySQL: SELECT COUNT(`id`) FROM `employee`
+// executa esse SQL para MySQL: SELECT COUNT(`id`) FROM `employee`
 $count = Yii::$app->db->createCommand("SELECT COUNT([[id]]) FROM {{employee}}")
             ->queryScalar();
 ```
 
 
-### Using Table Prefix <span id="using-table-prefix"></span>
+### Usando Prefixo de Tabela <span id="using-table-prefix"></span>
 
-If most of your DB tables names share a common prefix, you may use the table prefix feature provided
-by Yii DAO.
+Se a maioria dos nomes de suas tabelas de banco de dados compartilham um prefixo comum, você pode usar o recurso de prefixo de tabela fornecido
+por Yii DAO.
 
-First, specify the table prefix via the [[yii\db\Connection::tablePrefix]] property in the application config:
+Primeiro, especifique o prefixo da tabela por meio da propriedade [[yii\db\Connection::tablePrefix]] nas configurações da aplicação:
 
 ```php
 return [
@@ -327,24 +327,24 @@ return [
 ];
 ```
 
-Then in your code, whenever you need to refer to a table whose name contains such a prefix, use the syntax
-`{{%table_name}}`. The percentage character will be automatically replaced with the table prefix that you have specified
-when configuring the DB connection. For example,
+Então, no seu código, sempre que precisar se referir a uma tabela cujo nome contém esse prefixo, use a sintaxe
+`{{%table_name}}`. O caractere de porcentagem será automaticamente substituído pelo prefixo da tabela que você especificou
+ao configurar a conexão do banco de dados. Por exemplo,
 
 ```php
-// executes this SQL for MySQL: SELECT COUNT(`id`) FROM `tbl_employee`
+// executa esse SQL para MySQL: SELECT COUNT(`id`) FROM `tbl_employee`
 $count = Yii::$app->db->createCommand("SELECT COUNT([[id]]) FROM {{%employee}}")
             ->queryScalar();
 ```
 
 
-## Performing Transactions <span id="performing-transactions"></span>
+## Realizando Transações <span id="performing-transactions"></span>
 
-When running multiple related queries in a sequence, you may need to wrap them in a transaction to ensure the integrity
-and consistency of your database. If any of the queries fails, the database will be rolled back to the state as if
-none of these queries were executed.
+Ao executar várias consultas relacionadas em uma sequência, pode ser necessário envolvê-las em uma transação para garantir a integridade
+e consistência do seu banco de dados. Se alguma das consultas falhar, o banco de dados será revertido para o estado anterior, e será como se
+nenhuma dessas consultas tivesse sido executada.
  
-The following code shows a typical way of using transactions:
+O código a seguir mostra uma maneira comum de usar transações:
 
 ```php
 Yii::$app->db->transaction(function($db) {
@@ -354,7 +354,7 @@ Yii::$app->db->transaction(function($db) {
 });
 ```
 
-The above code is equivalent to the following, which gives you more control about the error handling code:
+O código acima é equivalente ao seguinte, que dá mais controle sobre o código de tratamento de erros:
 
 ```php
 $db = Yii::$app->db;
@@ -374,23 +374,23 @@ try {
 }
 ```
 
-By calling the [[yii\db\Connection::beginTransaction()|beginTransaction()]] method, a new transaction is started.
-The transaction is represented as a [[yii\db\Transaction]] object stored in the `$transaction` variable. Then,
-the queries being executed are enclosed in a `try...catch...` block. If all queries are executed successfully,
-the [[yii\db\Transaction::commit()|commit()]] method is called to commit the transaction. Otherwise, if an exception
-will be triggered and caught, the [[yii\db\Transaction::rollBack()|rollBack()]] method is called to roll back
-the changes made by the queries prior to that failed query in the transaction. `throw $e` will then re-throw the
-exception as if we had not caught it, so the normal error handling process will take care of it.
+Ao chamar o método [[yii\db\Connection::beginTransaction()|beginTransaction()]], uma nova transação é iniciada.
+A transação é representada como um objeto [[yii\db\Transaction]] salvo na variável `$transaction`. Então,
+as consultas executadas são colocadas em um bloco `try...catch...`. Se todas as consultas forem executadas com sucesso,
+o método [[yii\db\Transaction::commit()|commit()]] é chamado para confirmar a transação. Caso contrário, se uma exceção
+for lançada e capturada, o método [[yii\db\Transaction::rollBack()|rollBack()]] é chamado para reverter
+as mudanças feitas pelas consultas anteriores à consulta que falhou na transação. `throw $e` então lançará novamente a
+exceção como se não a tivéssemos detectado, logo o processo normal de tratamento de erros cuidará dela.
 
-> Note: in the above code we have two catch-blocks for compatibility 
-> with PHP 5.x and PHP 7.x. `\Exception` implements the [`\Throwable` interface](https://www.php.net/manual/en/class.throwable.php)
-> since PHP 7.0, so you can skip the part with `\Exception` if your app uses only PHP 7.0 and higher.
+> Observação: no código acima temos dois blocos catch para compatibilidade
+> com PHP 5.x e PHP 7.x. `\Exception` implementa [`\Throwable` interface](https://www.php.net/manual/en/class.throwable.php)
+> desde PHP 7.0, então você pode pular a parte com `\Exception` se seu app usar apenas PHP 7.0 ou superior.
 
 
-### Specifying Isolation Levels <span id="specifying-isolation-levels"></span>
+### Especificando Níveis de Isolamento <span id="specifying-isolation-levels"></span>
 
-Yii also supports setting [isolation levels] for your transactions. By default, when starting a new transaction,
-it will use the default isolation level set by your database system. You can override the default isolation level as follows,
+Yii também suporta configuração de [isolation levels] para suas transações. Por padrão, ao iniciar uma nova transação,
+ele usará o nível de isolamento padrão definido pelo seu sistema de banco de dados. Você pode substituir o nível de isolamento padrão da seguinte maneira,
 
 ```php
 $isolationLevel = \yii\db\Transaction::REPEATABLE_READ;
@@ -399,51 +399,51 @@ Yii::$app->db->transaction(function ($db) {
     ....
 }, $isolationLevel);
  
-// or alternatively
+// ou alternativamente
 
 $transaction = Yii::$app->db->beginTransaction($isolationLevel);
 ```
 
-Yii provides four constants for the most common isolation levels:
+Yii fornece quatro constantes para os níveis de isolamento mais comuns:
 
-- [[\yii\db\Transaction::READ_UNCOMMITTED]] - the weakest level, Dirty reads, non-repeatable reads and phantoms may occur.
-- [[\yii\db\Transaction::READ_COMMITTED]] - avoid dirty reads.
-- [[\yii\db\Transaction::REPEATABLE_READ]] - avoid dirty reads and non-repeatable reads.
-- [[\yii\db\Transaction::SERIALIZABLE]] - the strongest level, avoids all of the above named problems.
+- [[\yii\db\Transaction::READ_UNCOMMITTED]] - no nível mais fraco, podem ocorrer leituras sujas, leituras não repetíveis e fantasmas.
+- [[\yii\db\Transaction::READ_COMMITTED]] - evita leituras sujas.
+- [[\yii\db\Transaction::REPEATABLE_READ]] - evita leituras sujas e leituras não repetiveis.
+- [[\yii\db\Transaction::SERIALIZABLE]] - o nível mais forte, evita todos os problemas citados acima.
 
-Besides using the above constants to specify isolation levels, you may also use strings with a valid syntax supported
-by the DBMS that you are using. For example, in PostgreSQL, you may use `"SERIALIZABLE READ ONLY DEFERRABLE"`.
+Além de usar as constantes acima para especificar níveis de isolamento, você também pode usar strings com uma sintaxe válida suportada
+pelo SGBD que você estiver utilizando. Por exemplo, no PostgreSQL, você pode usar `"SERIALIZABLE READ ONLY DEFERRABLE"`.
 
-Note that some DBMS allow setting the isolation level only for the whole connection. Any subsequent transactions
-will get the same isolation level even if you do not specify any. When using this feature
-you may need to set the isolation level for all transactions explicitly to avoid conflicting settings.
-At the time of this writing, only MSSQL and SQLite are affected by this limitation.
+Observe que alguns SGBDs permitem definir o nível de isolamento apenas para a conexão inteira. Quaisquer transações subsequentes
+terão o mesmo nível de isolamento mesmo se você não especificar nenhum. Ao usar este recurso
+pode ser necessário definir explicitamente o nível de isolamento para todas as transações para evitar configurações conflitantes.
+No momento da redação deste artigo, apenas MSSQL e SQLite são afetados por esta limitação.
 
-> Note: SQLite only supports two isolation levels, so you can only use `READ UNCOMMITTED` and `SERIALIZABLE`.
-Usage of other levels will result in an exception being thrown.
+> Observação: SQLite suporta apenas dois níveis de isolamento, então você só pode usar `READ UNCOMMITTED` e `SERIALIZABLE`.
+O uso de outros níveis resultará no lançamento de uma exceção.
 
-> Note: PostgreSQL does not allow setting the isolation level before the transaction starts so you can not
-specify the isolation level directly when starting the transaction.
-You have to call [[yii\db\Transaction::setIsolationLevel()]] in this case after the transaction has started.
+> Observação: O PostgreSQL não permite definir o nível de isolamento antes do início da transação, portanto você não pode
+especificar o nível de isolamento diretamente ao iniciar a transação.
+Você deve chamar neste caso [[yii\db\Transaction::setIsolationLevel()]] após o início da transação.
 
 [isolation levels]: https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Isolation_levels
 
 
-### Nesting Transactions <span id="nesting-transactions"></span>
+### Aninhando Transações <span id="nesting-transactions"></span>
 
-If your DBMS supports Savepoint, you may nest multiple transactions like the following:
+Se o seu SGBD suportar Savepoint, você poderá aninhar várias transações como a seguir:
 
 ```php
 Yii::$app->db->transaction(function ($db) {
-    // outer transaction
+    // transação externa
     
     $db->transaction(function ($db) {
-        // inner transaction
+        // transação interna
     });
 });
 ```
 
-Or alternatively,
+Ou alternativamente,
 
 ```php
 $db = Yii::$app->db;
